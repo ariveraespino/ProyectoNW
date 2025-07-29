@@ -1,6 +1,16 @@
 {
   "public": [
     {
+      "id": "Menu_Catalago",
+      "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=helado",
+      "nav_label":"Pasteles helados"
+    },
+     {
+      "id": "Menu_Catalago",
+      "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=seco",
+      "nav_label":"Pasteles seco"
+    },
+    {
       "id": "Menu_SignIn",
       "nav_url": "index.php?page=Sec_Login",
       "nav_label":"<i class=\"fas fa-sign-in-alt\"></i>&nbsp;Iniciar Sesión"
@@ -16,6 +26,12 @@
       "id":"Menu_PaymentCheckout",
       "nav_url": "index.php?page=Checkout_Checkout",
       "nav_label": "Carretilla de Compra"
+    },
+
+     {
+      "id": "Menu_Catalago",
+      "nav_url": "index.php?page=Maintenance-Products-Pasteles",
+      "nav_label":"Pasteles lado del admin"
     }
   ]
 }
