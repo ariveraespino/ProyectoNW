@@ -7,7 +7,6 @@
     font-style: normal;
 }
 
-
 body, html {
     margin: 0;
     padding: 0;
@@ -15,85 +14,30 @@ body, html {
 }
 
 
-
-
-.carousel {
+.img-main {
     position: relative;
-    width: 100vw; /* Ancho completo */
-    height: 100vh; /* Alto completo */
-    overflow: hidden; /* Oculta contenido que no esté visible */
-  }
-  
-  .carousel-track {
-    display: flex; /* Las imágenes estarán alineadas en una fila */
-    height: 100%; /* Ocupa todo el alto del carrusel */
-    transition: transform 0.5s ease-in-out; /* Animación al cambiar de slide */
-  }
-  
-  .img-main {
-    position: relative;
-    flex: 0 0 100%; /* Cada slide ocupa el 100% del ancho de la pantalla */
-    height: 100vh; /* Ocupa todo el alto */
-    overflow: hidden; /* Oculta contenido sobrante */
-  }
-  
-  .img-main img {
-    width: 100%; /* Asegura que la imagen ocupe todo el ancho */
-    height: 100%; /* Asegura que la imagen ocupe todo el alto */
-    object-fit: cover; /* Ajusta la imagen sin deformarla */
-  }
-  
-  .titulo, .titulo-h2 {
+    flex: 0 0 100%;
+    height: 90vh; /* También ajustado a 60% */
+    overflow: hidden;
+}
+
+.img-main img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.titulo {
     position: absolute;
+    top: 30%;
     left: 50%;
     transform: translateX(-50%);
     color: #fff;
     text-shadow: 4px 4px 16px #000;
     text-align: center;
-  }
-  
-  .titulo {
-    top: 30%; /* Centrado vertical */
-    font-size: 6vw; /* Tamaño proporcional al ancho de la ventana */
-  }
-  
-  .titulo-h2 {
-    top: 70%;
-    font-size: 2vw; /* Ajuste proporcional al ancho */
-    margin-top: 45px;
-  }
-  
-  .carousel-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 10;
-    -webkit-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -o-transform: translateY(-50%);
+    font-size: 5vw;
 }
-  
-  .carousel-button.left {
-    left: 20px;
-  }
-  
-  .carousel-button.right {
-    right: 20px;
-  }
-  
-  .carousel-button:hover {
-    background: rgba(0, 0, 0, 0.8);
-  }
-  
 
-  .coleccion {
+.coleccion {
     margin: 50px auto;
     text-align: center;
     width: fit-content;
@@ -106,15 +50,25 @@ body, html {
 }
 
 .item-container {
-    width: 250px; /* Define un ancho para los item-container */
+    width: 250px;
     margin: 0 15px;
-    margin-bottom: 50px; /* Espacio inferior para los items */
+    margin-bottom: 50px;
 }
 
 .item {
     position: relative;
     width: fit-content;
-    /* margin: 0 50px; */
+}
+
+.item-img {
+    z-index: 100;
+    position: relative;
+}
+
+.item-img img {
+    width: 250px;
+    height: 300px;
+    object-fit: cover;
 }
 
 .tarjeta {
@@ -127,21 +81,13 @@ body, html {
     z-index: 50;
 }
 
-
-
 .tarjeta h3 {
-    
     font-size: 16px;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
 }
-
 
 .tarjeta-borde {
     top: 0;
@@ -152,10 +98,6 @@ body, html {
     height: 20px;
     transition: 1s;
     transform: translateY(-100%);
-    -webkit-transition: 1s;
-    -moz-transition: 1s;
-    -ms-transition: 1s;
-    -o-transition: 1s;
 }
 
 .tarjeta-borde:hover {
@@ -163,57 +105,20 @@ body, html {
     background-color: #c9c9c9;
 }
 
-.tarjeta-borde:active {
-    z-index: 150;
-}
-
 .tarjeta-borde img {
     width: 20px;
-    /* height: 16px; */
 }
 
-.item-img {
-    z-index: 100;
-    position: relative;
-}
-
-.item-img img {
-    width: 250px;
-    height: 300px;
-    object-fit:cover;
-}
-
-
-
+/* Responsive Design */
 @media (max-width: 768px) {
-    .titulo-h2 {
-        font-size: 2.5vw;
-        top: 50%;
+    .titulo {
+        font-size: 8vw;
     }
 }
-
 
 @media (max-width: 525px) {
-
     .titulo {
-        font-size: 2.2rem;
-        top: 40%;
+        font-size: 10vw;
+        top: 25%;
     }
-
-    .titulo-h2 {
-        opacity: 0;
-    }
- 
-    .carousel {
-        position: relative;
-        width: 100vw; /* Ancho completo */
-        height: 60vh; /* Alto completo */
-        overflow: hidden; /* Oculta contenido que no esté visible */
-      }
-
-      .titulo {
-        top: 25%; /* Centrado vertical */
-        font-size: 10vw; /* Tamaño proporcional al ancho de la ventana */
-      }
-
 }

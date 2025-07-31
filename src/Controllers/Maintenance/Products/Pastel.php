@@ -25,8 +25,10 @@ class Pastel extends PrivateController
             "nombre" => "",
             "tipo" => "",
             "descripcion" => "",
-            "url_img" => "", 
+            "url_img" => "",
             "precio" => 0,
+            "cantidad" => 0,
+            "estado_pastel" => "",
             "modeDsc" => "",
             "errors" => [],
             "cancelLabel" => "Cancel",
@@ -67,11 +69,7 @@ class Pastel extends PrivateController
 
     private function innerError(string $scope, string $message)
     {
-        if (!isset($this->viewData["errors"][$scope])) {
-            $this->viewData["errors"][$scope] = [$message];
-        } else {
-            $this->viewData["errors"][$scope][] = $message;
-        }
+        $this->viewData["errors"][$scope][] = $message;
     }
 
     private function getQueryParamsData()
@@ -100,6 +98,8 @@ class Pastel extends PrivateController
             $this->viewData["descripcion"] = $tmp["descripcion"];
             $this->viewData["url_img"] = $tmp["url_img"];
             $this->viewData["precio"] = $tmp["precio"];
+            $this->viewData["cantidad"] = $tmp["cantidad"];
+            $this->viewData["estado_pastel"] = $tmp["estado_pastel"];
         } else {
             $this->throwError("No se encontró el pastel.");
         }
@@ -107,7 +107,7 @@ class Pastel extends PrivateController
 
     private function getBodyData()
     {
-        foreach (["id", "nombre", "tipo", "descripcion", "precio", "xsrtoken"] as $key) {
+        foreach (["id", "nombre", "tipo", "descripcion", "precio", "cantidad", "estado_pastel", "xsrtoken"] as $key) {
             if (!isset($_POST[$key])) {
                 $this->throwError("Faltan datos.");
             }
@@ -125,6 +125,8 @@ class Pastel extends PrivateController
         $this->viewData["tipo"] = $_POST["tipo"];
         $this->viewData["descripcion"] = $_POST["descripcion"];
         $this->viewData["precio"] = intval($_POST["precio"]);
+        $this->viewData["cantidad"] = intval($_POST["cantidad"]);
+        $this->viewData["estado_pastel"] = $_POST["estado_pastel"];
     }
 
     private function validateData(): bool
@@ -144,37 +146,42 @@ class Pastel extends PrivateController
         if (strlen($this->viewData["descripcion"]) > 255) {
             $this->innerError("descripcion", "Máximo 255 caracteres.");
         }
+        if (strlen($this->viewData["estado_pastel"]) > 3) {
+            $this->innerError("estado_pastel", "Máximo 3 caracteres.");
+        }
 
         return count($this->viewData["errors"]) === 0;
     }
 
     private function processData()
     {
+        $fileName = $this->viewData["url_img"] ?: "default.jpg";
+
+        if (isset($_FILES["url_img"]) && $_FILES["url_img"]["error"] === UPLOAD_ERR_OK) {
+            $fileName = basename($_FILES["url_img"]["name"]);
+            $uploadDir = "C:\\xampp\\htdocs\\ProyectoNW\\public\\imgs\\hero\\";
+            $uploadPath = $uploadDir . $fileName;
+
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            if (!move_uploaded_file($_FILES["url_img"]["tmp_name"], $uploadPath)) {
+                $this->innerError("global", "Error al guardar la imagen.");
+                return;
+            }
+        }
+
         switch ($this->viewData["mode"]) {
             case "INS":
-                $fileName = "default.jpg";
-
-                if (isset($_FILES["url_img"]) && $_FILES["url_img"]["error"] === UPLOAD_ERR_OK) {
-                    $fileName = basename($_FILES["url_img"]["name"]);
-                    $uploadDir = "C:\\xampp\\htdocs\\ProyectoNW\\public\\imgs\\hero\\";
-                    $uploadPath = $uploadDir . $fileName;
-
-                    if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0755, true);
-                    }
-
-                    if (!move_uploaded_file($_FILES["url_img"]["tmp_name"], $uploadPath)) {
-                        $this->innerError("global", "No se pudo mover el archivo.");
-                        return;
-                    }
-                }
-
                 if (PastelesDAO::newPastel(
                     $this->viewData["nombre"],
                     $this->viewData["tipo"],
                     $this->viewData["descripcion"],
                     $fileName,
-                    $this->viewData["precio"]
+                    $this->viewData["precio"],
+                    $this->viewData["cantidad"],
+                    $this->viewData["estado_pastel"]
                 ) > 0) {
                     Site::redirectToWithMsg(LIST_URL, "Pastel creado exitosamente.");
                 } else {
@@ -183,30 +190,15 @@ class Pastel extends PrivateController
                 break;
 
             case "UPD":
-                $fileName = $this->viewData["url_img"];
-
-                if (isset($_FILES["url_img"]) && $_FILES["url_img"]["error"] === UPLOAD_ERR_OK) {
-                    $fileName = basename($_FILES["url_img"]["name"]);
-                    $uploadDir = "C:\\xampp\\htdocs\\ProyectoNW\\public\\imgs\\hero\\";
-                    $uploadPath = $uploadDir . $fileName;
-
-                    if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0755, true);
-                    }
-
-                    if (!move_uploaded_file($_FILES["url_img"]["tmp_name"], $uploadPath)) {
-                        $this->innerError("global", "Error al guardar la imagen.");
-                        return;
-                    }
-                }
-
                 if (PastelesDAO::updatePastel(
                     $this->viewData["id"],
                     $this->viewData["nombre"],
                     $this->viewData["tipo"],
                     $this->viewData["descripcion"],
                     $fileName,
-                    $this->viewData["precio"]
+                    $this->viewData["precio"],
+                    $this->viewData["cantidad"],
+                    $this->viewData["estado_pastel"]
                 ) > 0) {
                     Site::redirectToWithMsg(LIST_URL, "Pastel actualizado exitosamente.");
                 } else {
@@ -246,6 +238,10 @@ class Pastel extends PrivateController
             $this->viewData["readonly"] = "readonly";
         }
 
+        $this->viewData["estado_act"] = ($this->viewData["estado_pastel"] === "ACT") ? "checked" : "";
+        $this->viewData["estado_int"] = ($this->viewData["estado_pastel"] === "INT") ? "checked" : "";
+        $tipPastel = $_GET['tip_pastel'] ?? null;
+        $this->viewData['tip_pastel'] = $tipPastel;
         $this->viewData["timestamp"] = time();
         $this->viewData["xsrtoken"] = hash("sha256", json_encode($this->viewData));
         $_SESSION[$this->name . "-xsrtoken"] = $this->viewData["xsrtoken"];

@@ -2,12 +2,12 @@
   "public": [
     {
       "id": "Menu_Catalago",
-      "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=helado",
+      "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=HELADO",
       "nav_label":"Pasteles helados"
     },
      {
       "id": "Menu_Catalago",
-      "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=seco",
+      "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=SECO",
       "nav_label":"Pasteles seco"
     },
     {

@@ -15,11 +15,11 @@ class Pasteles extends Table
         );
     }
 
-    public static function getPastelesByTipo(string $tipo): array
-    {
-        $sqlstr = "SELECT * FROM pasteles WHERE tipo = :tipo;";
-        return self::obtenerRegistros($sqlstr, ["tipo" => $tipo]);
-    }
+  public static function getPastelesByTipo(string $tipo): array
+{
+    $sqlstr = "SELECT * FROM pasteles WHERE tipo = :tipo AND estado_pastel = 'ACT';";
+    return self::obtenerRegistros($sqlstr, ["tipo" => $tipo]);
+}
 
     public static function getPastelById(int $id)
     {
@@ -27,10 +27,17 @@ class Pasteles extends Table
         return self::obtenerUnRegistro($sqlstr, ["id" => $id]);
     }
 
-    public static function newPastel(string $nombre, string $tipo, string $descripcion, string $url_img, int $precio)
-    {
-        $sqlstr = "INSERT INTO pasteles (nombre, tipo, descripcion, url_img, precio) 
-                   VALUES (:nombre, :tipo, :descripcion, :url_img, :precio);";
+    public static function newPastel(
+        string $nombre,
+        string $tipo,
+        string $descripcion,
+        string $url_img,
+        int $precio,
+        int $cantidad,
+        string $estado_pastel
+    ) {
+        $sqlstr = "INSERT INTO pasteles (nombre, tipo, descripcion, url_img, precio, cantidad, estado_pastel) 
+                   VALUES (:nombre, :tipo, :descripcion, :url_img, :precio, :cantidad, :estado_pastel);";
         return self::executeNonQuery(
             $sqlstr,
             [
@@ -38,15 +45,26 @@ class Pasteles extends Table
                 "tipo" => $tipo,
                 "descripcion" => $descripcion,
                 "url_img" => $url_img,
-                "precio" => $precio
+                "precio" => $precio,
+                "cantidad" => $cantidad,
+                "estado_pastel" => $estado_pastel
             ]
         );
     }
 
-    public static function updatePastel(int $id, string $nombre, string $tipo, string $descripcion, string $url_img, int $precio)
-    {
+    public static function updatePastel(
+        int $id,
+        string $nombre,
+        string $tipo,
+        string $descripcion,
+        string $url_img,
+        int $precio,
+        int $cantidad,
+        string $estado_pastel
+    ) {
         $sqlstr = "UPDATE pasteles 
-                   SET nombre = :nombre, tipo = :tipo, descripcion = :descripcion, url_img = :url_img, precio = :precio 
+                   SET nombre = :nombre, tipo = :tipo, descripcion = :descripcion, url_img = :url_img, 
+                       precio = :precio, cantidad = :cantidad, estado_pastel = :estado_pastel 
                    WHERE pastel_id = :id;";
         return self::executeNonQuery(
             $sqlstr,
@@ -56,6 +74,8 @@ class Pasteles extends Table
                 "descripcion" => $descripcion,
                 "url_img" => $url_img,
                 "precio" => $precio,
+                "cantidad" => $cantidad,
+                "estado_pastel" => $estado_pastel,
                 "id" => $id
             ]
         );

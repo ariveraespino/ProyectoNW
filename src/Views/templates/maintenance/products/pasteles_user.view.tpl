@@ -9,15 +9,10 @@
 
 
 
-<div class="carousel">
-    <div class="carousel-track">
-        <div class="img-main">
-            <img src="public/imgs/hero/pastel45.jpeg" alt="Imagen 1">
-            <h1 class="titulo">PASTELES {{nombre}} <br>Bakery</h1>
+ <div class="img-main">
+            <img src="public/imgs/hero/pastelkawaii.jpg" alt="Imagen 1">
+            <h1 class="titulo">PASTELES {{tip_pastel}}S <br>BAKERY</h1>
         </div>
-       
-    </div>
-</div>
  
 
         <div class="coleccion">

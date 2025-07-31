@@ -7,6 +7,8 @@
                 <th>Nombre</th>
                 <th>Tipo</th>
                 <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Estado</th>
                 <th>Imagen</th>
                 <th>
                     {{if isNewEnabled}}
@@ -22,7 +24,11 @@
                 <td>{{nombre}}</td>
                 <td>{{tipo}}</td>
                 <td>{{precio}}</td>
-                <td><img src="public/imgs/hero/{{url_img}}" alt="Imagen del pastel" width="80px" /></td>
+                <td>{{cantidad}}</td>
+                <td>{{estado_pastel}}</td>
+                <td>
+                    <img src="public/imgs/hero/{{url_img}}" alt="Imagen del pastel" width="80px" />
+                </td>
                 <td>
                     {{if ~isUpdateEnabled}}
                     <a href="index.php?page=Maintenance-Products-Pastel&mode=UPD&id={{pastel_id}}">
