@@ -3,12 +3,12 @@
     {
       "id": "Menu_Catalago",
       "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=HELADO",
-      "nav_label":"Pasteles helados"
+      "nav_label":"<i class=\"fa-solid fa-cake-candles\"></i>&nbsp;Pasteles Helados"
     },
      {
       "id": "Menu_Catalago",
       "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=SECO",
-      "nav_label":"Pasteles seco"
+      "nav_label":"<i class=\"fa-solid fa-cake-candles\"></i>&nbsp;Pasteles Secos"
     },
     {
       "id": "Menu_SignIn",
@@ -18,14 +18,19 @@
      {
       "id": "Menu_SignUp",
       "nav_url": "index.php?page=Sec_Register",
-      "nav_label":"<i class=\"fas fa-sign-in-alt\"></i>&nbsp;Crear Cuenta"
+      "nav_label":"<i class=\"fa-solid fa-circle-user\"></i>&nbsp;Crear Cuenta"
+    },
+    {
+      "id":"Menu_CartCarrito",
+      "nav_url": "index.php?page=Maintenance_Cart_Carrito",
+      "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Carretilla de Compra"
     }
   ],
   "private": [
     {
-      "id":"Menu_PaymentCheckout",
-      "nav_url": "index.php?page=Checkout_Checkout",
-      "nav_label": "Carretilla de Compra"
+      "id":"Menu_CartCarrito",
+      "nav_url": "index.php?page=Maintenance_Cart_Carrito",
+      "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Carretilla de Compra"
     },
 
      {

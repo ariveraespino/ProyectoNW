@@ -159,7 +159,7 @@ class Pastel extends PrivateController
 
         if (isset($_FILES["url_img"]) && $_FILES["url_img"]["error"] === UPLOAD_ERR_OK) {
             $fileName = basename($_FILES["url_img"]["name"]);
-            $uploadDir = "C:\\xampp\\htdocs\\ProyectoNW\\public\\imgs\\hero\\";
+            $uploadDir = "C:\\xampp\\htdocs\\Proyecto_Neg\\ProyectoNW\\public\\imgs\\hero\\";
             $uploadPath = $uploadDir . $fileName;
 
             if (!is_dir($uploadDir)) {

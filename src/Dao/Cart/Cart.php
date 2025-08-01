@@ -47,7 +47,7 @@ class Cart extends \Dao\Table
         $prodsCarretillaAutorizada = null;
         $prodsCarretillaNAutorizada = null;
 
-        echo "<script>console.log( '". $productosCurados ."');</script>";
+        
         return $productosCurados;
     }
 
@@ -139,7 +139,7 @@ class Cart extends \Dao\Table
         } else {
             self::restarCantidad($pastel_id);
         return self::executeNonQuery(
-            "INSERT INTO carretillaa (usercod, pastel_id, crrctd, crrprc, crrfching) VALUES (:usercod, :pastel_id, :crrctd, :crrprc, NOW());",
+            "INSERT INTO carretilla (usercod, pastel_id, crrctd, crrprc, crrfching) VALUES (:usercod, :pastel_id, :crrctd, :crrprc, NOW());",
             ["usercod" => $usercod, "pastel_id" => $pastel_id, "crrctd" => $cantidad, "crrprc" => $precio]
         );
         }
