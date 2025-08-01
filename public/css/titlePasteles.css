@@ -1,0 +1,10 @@
+.h3-nombrePastel {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #333333;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px rgba(180, 180, 180, 0.8) solid;
+  padding-left: 0.75rem;
+  letter-spacing: 0.02em;
+}

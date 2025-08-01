@@ -1,5 +1,9 @@
 <?php
 namespace Controllers\Sec;
+
+use Utilities\Cart\CartFns;
+use Dao\Cart\Cart;
+
 class Login extends \Controllers\PublicController
 {
     private $txtEmail = "";
@@ -55,6 +59,11 @@ class Login extends \Controllers\PublicController
                             $dbUser["username"],
                             $dbUser["useremail"]
                         );
+
+                        //Traslado de carretillaAnon a carretillaAutorizada
+                        $anoncod = CartFns::getAnnonCartCode();
+                        Cart::moveAnonToAuth($anoncod, $dbUser["usercod"]);
+
                         if (\Utilities\Context::getContextByKey("redirto") !== "") {
                             \Utilities\Site::redirectTo(
                                 \Utilities\Context::getContextByKey("redirto")

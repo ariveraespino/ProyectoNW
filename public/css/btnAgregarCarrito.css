@@ -1,0 +1,31 @@
+.btn-cart {
+  background-color: transparent;
+  color: #333;
+  border: 2px solid #333;
+  padding: 10px 25px;
+  font-size: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-weight: 500;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 10px;
+
+}
+
+.btn-cart:hover {
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.btn-cart:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.3);
+}
+
+.btn-cart:active {
+  background-color: #555;
+  border-color: #555;
+  color: #fff;
+}
