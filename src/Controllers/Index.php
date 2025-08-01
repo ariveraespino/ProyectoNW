@@ -65,6 +65,7 @@ class Index extends PublicController
                     }
                 }
             }
+            $this->getCartCounter();
         }
 
         $pasteles = Cart::getProductosDisponibles();

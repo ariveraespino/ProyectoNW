@@ -37,6 +37,21 @@
       "id": "Menu_Catalago",
       "nav_url": "index.php?page=Maintenance-Products-Pasteles",
       "nav_label":"Pasteles lado del admin"
+    },
+    {
+      "id": "Menu_Catalago",
+      "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=HELADO",
+      "nav_label":"<i class=\"fa-solid fa-cake-candles\"></i>&nbsp;Pasteles Helados"
+    },
+     {
+      "id": "Menu_Catalago",
+      "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=SECO",
+      "nav_label":"<i class=\"fa-solid fa-cake-candles\"></i>&nbsp;Pasteles Secos"
+    },
+    {
+      "id":"Menu_CartCarrito",
+      "nav_url": "index.php?page=Maintenance_Cart_Carrito",
+      "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Carretilla de Compra"
     }
   ]
 }

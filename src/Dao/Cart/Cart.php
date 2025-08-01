@@ -157,6 +157,13 @@ class Cart extends \Dao\Table
         self::executeNonQuery($deleteSql, ["anoncod" => $anonCod]);
     }
 
+    //Funcion para borrar la carretilla cuando el usuario complete la compra
+    public static function deleteAuthCart(int $usercod){
+        $deleteSql = "DELETE from carretilla WHERE usercod = :usercod;";
+        self::executeNonQuery($deleteSql, ["usercod" => $usercod]);
+        echo 'Se borro la carretilla';
+    }
+
     public static function getProducto($pastel_id)
     {
         $sqlAllProductosActivos = "SELECT * from pasteles where pastel_id=:pastel_id;";
