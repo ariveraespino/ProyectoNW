@@ -139,8 +139,15 @@ CREATE TABLE ubicacion(
 
 CREATE TABLE factura(  
     ID_factura BIGINT(10) NOT NULL AUTO_INCREMENT,
+    orden_ID VARCHAR(255),
+    comprador VARCHAR(255),
+    estado VARCHAR(20),
+    total_bruto DECIMAL(12, 2),
     usercod BIGINT,
 
-    PRIMARY KEY(ID_ubicacion),
-    CONSTRAINT ubi_usuario_key FOREIGN KEY (usercod) REFERENCES usuario (usercod) ON DELETE NO ACTION ON UPDATE NO ACTION
-) COMMENT 'Ubicacion';
+    PRIMARY KEY (ID_factura),
+    CONSTRAINT fk_usuario_factura FOREIGN KEY (usercod) 
+        REFERENCES usuario(usercod) 
+        ON DELETE NO ACTION 
+        ON UPDATE NO ACTION
+);
