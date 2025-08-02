@@ -11,6 +11,11 @@
       "nav_label":"<i class=\"fa-solid fa-cake-candles\"></i>&nbsp;Pasteles Secos"
     },
     {
+      "id":"Menu_Carrito",
+      "nav_url": "index.php?page=Maintenance_Cart_Carrito",
+      "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Carretilla de Compra"
+    },
+    {
       "id": "Menu_SignIn",
       "nav_url": "index.php?page=Sec_Login",
       "nav_label":"<i class=\"fas fa-sign-in-alt\"></i>&nbsp;Iniciar Sesión"
@@ -19,39 +24,39 @@
       "id": "Menu_SignUp",
       "nav_url": "index.php?page=Sec_Register",
       "nav_label":"<i class=\"fa-solid fa-circle-user\"></i>&nbsp;Crear Cuenta"
-    },
-    {
-      "id":"Menu_CartCarrito",
-      "nav_url": "index.php?page=Maintenance_Cart_Carrito",
-      "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Carretilla de Compra"
     }
   ],
   "private": [
-    {
-      "id":"Menu_CartCarrito",
-      "nav_url": "index.php?page=Maintenance_Cart_Carrito",
-      "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Carretilla de Compra"
-    },
-
+  
      {
-      "id": "Menu_Catalago",
+      "id": "Menu_Admin",
       "nav_url": "index.php?page=Maintenance-Products-Pasteles",
-      "nav_label":"Pasteles lado del admin"
+      "nav_label":"Agregar Pasteles"
     },
     {
-      "id": "Menu_Catalago",
+      "id": "Menu_Usuario",
       "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=HELADO",
       "nav_label":"<i class=\"fa-solid fa-cake-candles\"></i>&nbsp;Pasteles Helados"
     },
      {
-      "id": "Menu_Catalago",
+      "id": "Menu_Usuario",
       "nav_url": "index.php?page=Maintenance-Products-Pastelesu&tip_pastel=SECO",
       "nav_label":"<i class=\"fa-solid fa-cake-candles\"></i>&nbsp;Pasteles Secos"
     },
     {
-      "id":"Menu_CartCarrito",
+      "id":"Menu_Usuario",
       "nav_url": "index.php?page=Maintenance_Cart_Carrito",
       "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Carretilla de Compra"
+    },
+    {
+      "id":"Menu_Admin",
+      "nav_url": "index.php?page=Maintenance-Products-Facturas",
+      "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Historial de Transacciones"
+    },
+    {
+      "id":"Menu_Usuario",
+      "nav_url": "index.php?page=Maintenance-Products-FacturasU",
+      "nav_label": "<i class=\"fa-solid fa-cart-shopping\"></i>Historial de Compras"
     }
   ]
 }

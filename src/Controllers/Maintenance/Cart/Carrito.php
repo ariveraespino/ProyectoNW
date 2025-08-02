@@ -10,6 +10,7 @@ use Utilities\Site;
 class Carrito extends PublicController 
 {
     private array $viewData;
+    
 
     public static function getCarrito(): array
     {
@@ -25,6 +26,13 @@ class Carrito extends PublicController
     public function run(): void
     {
         $this->viewData["carrito"] = self::getCarrito();
-        Renderer::render("maintenance/products/carrito", $this->viewData); 
+        if (isset($_SESSION["login"]["userId"])) {
+               Renderer::render("maintenance/products/carrito", $this->viewData); 
+        } elseif (isset($_SESSION["annonCartCode"])) {
+                Renderer::render("maintenance/products/carritoA", $this->viewData); 
+        }
+        
+    
+        
     }
 }

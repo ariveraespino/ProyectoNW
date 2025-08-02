@@ -26,6 +26,11 @@ abstract class Table
         "NULL" => \PDO::PARAM_NULL,
         "unknown type" => \PDO::PARAM_STR
     );
+    
+    public static function getLastInsertId()
+{
+    return self::obtenerConexion()->lastInsertId();
+}
     protected static function getBindType($value)
     {
         $valueType = gettype($value);

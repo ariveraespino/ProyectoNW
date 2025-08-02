@@ -17,7 +17,7 @@ class Pasteles extends Table
 
   public static function getPastelesByTipo(string $tipo): array
 {
-    $sqlstr = "SELECT * FROM pasteles WHERE tipo = :tipo AND estado_pastel = 'ACT';";
+    $sqlstr = "SELECT * FROM pasteles WHERE tipo = :tipo AND estado_pastel = 'ACT' AND cantidad >0 ;";
     return self::obtenerRegistros($sqlstr, ["tipo" => $tipo]);
 }
 

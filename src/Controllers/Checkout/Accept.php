@@ -5,6 +5,7 @@ namespace Controllers\Checkout;
 use Controllers\PublicController;
 use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 use PayPalHttp\HttpException;
+use Dao\Factura\Factura; // Agregamos la importación de la nueva clase
 
 class Accept extends PublicController
 {
@@ -48,6 +49,44 @@ class Accept extends PublicController
             $dataview["paypalFee"] = $capture->seller_receivable_breakdown->paypal_fee->value;
             $dataview["netAmount"] = $capture->seller_receivable_breakdown->net_amount->value;
             $dataview["orderId"] = $result->id;
+
+            // =========================================================================
+            // LÓGICA AGREGADA: INSERCIÓN EN LA BASE DE DATOS
+            // =========================================================================
+
+            // Asegúrate de tener una variable de sesión con el ID del usuario
+            $userId = $_SESSION["login"]["userId"] ?? null;
+
+            if ($userId !== null) {
+                try {
+                    // Llama al método estático de la nueva clase Dao\Factura
+                    $result = Factura::insertarFactura(
+                        $dataview["orderId"],
+                        $dataview["payerName"],
+                        $dataview["status"],
+                        $dataview["grossAmount"],
+                        $userId,
+                        $dataview["payerEmail"]
+                    );
+
+                    if ($result > 0) {
+                        $dataview["success_message"] = "La factura se ha guardado correctamente.";
+                    } else {
+                        $dataview["error"] = "No se pudo guardar la factura.";
+                    }
+                } catch (\Exception $e) {
+                    error_log("Error al insertar la factura: " . $e->getMessage());
+                    $dataview["error"] = "Ocurrió un error interno al guardar la factura.";
+                }
+
+            } else {
+                // Manejar el caso en el que no se encontró el usercod
+                $dataview["error"] = "ID de usuario no encontrado en la sesión.";
+            }
+
+            // =========================================================================
+            // FIN DE LA LÓGICA DE INSERCIÓN
+            // =========================================================================
 
         } else {
             $dataview["error"] = "¡Token inválido o no disponible!";

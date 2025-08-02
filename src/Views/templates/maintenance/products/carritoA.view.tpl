@@ -15,7 +15,8 @@
                         <th class="col-1">Cantidad</th>
                         <th class="col-1">Restar</th>
                         <th class="col-1">Sumar</th>
-                        <th class="col-5">Imagen</th>
+                        <th class="col-1">Eliminar</th>
+                        <th class="col-4">Imagen</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,7 +42,7 @@
                             </form>
                         </td>
 
-                          <td class="col-1">
+                        <td class="col-1">
                             <form action="index.php?page=Maintenance-Cart-CartUpdate" method="post" style="margin:0;">
                                 <input type="hidden" name="pastel_id" value="{{pastel_id}}">
                                 <input type="hidden" name="action" value="eliminar">
@@ -49,7 +50,7 @@
                             </form>
                         </td>
 
-                        <td class="col-5">
+                        <td class="col-4">
                             <img src="public/imgs/hero/{{url_img}}" alt="Pastel" width="100px">
                         </td>
                     </tr>
@@ -59,7 +60,5 @@
         </div>
     </div>
 
-    <form action="index.php?page=checkout_checkout" method="post">
-        <button type="submit">Completar Compra</button>
-    </form>
+    <button type="button" onclick="window.location.href='index.php?page=Sec_Login'">Iniciar Sesión</button>
 </section>

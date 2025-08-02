@@ -9,7 +9,7 @@ class Cart extends \Dao\Table
         $sqlAllProductosActivos = "SELECT * from pasteles;";
         $productosDisponibles = self::obtenerRegistros($sqlAllProductosActivos, array());
 
-        //Sacar el stock de productos con carretilla autorizada
+        
         $deltaAutorizada = \Utilities\Cart\CartFns::getAuthTimeDelta();
         $sqlCarretillaAutorizada = "select pastel_id, sum(crrctd) as reserved
             from carretilla where TIME_TO_SEC(TIMEDIFF(now(), crrfching)) <= :delta
@@ -18,7 +18,7 @@ class Cart extends \Dao\Table
             $sqlCarretillaAutorizada,
             array("delta" => $deltaAutorizada)
         );
-        //Sacar el stock de productos con carretilla no autorizada
+        
         $deltaNAutorizada = \Utilities\Cart\CartFns::getUnAuthTimeDelta();
         $sqlCarretillaNAutorizada = "select pastel_id, sum(crrctd) as reserved
             from carretillaanon where TIME_TO_SEC(TIMEDIFF(now(), crrfching)) <= :delta
@@ -56,7 +56,7 @@ class Cart extends \Dao\Table
         $sqlAllProductosActivos = "SELECT * from pasteles where pastel_id=:pastel_id;";
         $productosDisponibles = self::obtenerRegistros($sqlAllProductosActivos, array("pastel_id" => $pastel_id));
 
-        //Sacar el stock de productos con carretilla autorizada
+       
         $deltaAutorizada = \Utilities\Cart\CartFns::getAuthTimeDelta();
         $sqlCarretillaAutorizada = "select pastel_id, sum(crrctd) as reserved
             from carretilla where pastel_id=:pastel_id and TIME_TO_SEC(TIMEDIFF(now(), crrfching)) <= :delta
@@ -65,7 +65,7 @@ class Cart extends \Dao\Table
             $sqlCarretillaAutorizada,
             array("pastel_id" => $pastel_id, "delta" => $deltaAutorizada)
         );
-        //Sacar el stock de productos con carretilla no autorizada
+    
         $deltaNAutorizada = \Utilities\Cart\CartFns::getUnAuthTimeDelta();
         $sqlCarretillaNAutorizada = "select pastel_id, sum(crrctd) as reserved
             from carretillaanon where pastel_id = :pastel_id and TIME_TO_SEC(TIMEDIFF(now(), crrfching)) <= :delta
@@ -95,7 +95,52 @@ class Cart extends \Dao\Table
         $prodsCarretillaNAutorizada = null;
         return $productosCurados[$pastel_id];
     }
+public static function removeFromAnonCart(int $pastel_id, string $anonCod)
+{
+    // Primero, obtener la cantidad actual
+    $sqlGet = "SELECT crrctd FROM carretillaanon WHERE pastel_id = :pastel_id AND anoncod = :anoncod;";
+    $resultado = self::obtenerUnRegistro($sqlGet, ["pastel_id" => $pastel_id, "anoncod" => $anonCod]);
 
+    if (!$resultado) {
+        // No existe el registro, nada que hacer
+        return false;
+    }
+
+    $cantidadActual = (int)$resultado["crrctd"];
+    if ($cantidadActual <= 1) {
+        // Si queda 0 o menos, eliminar el registro
+        $sqlDelete = "DELETE FROM carretillaanon WHERE pastel_id = :pastel_id AND anoncod = :anoncod;";
+        return self::executeNonQuery($sqlDelete, ["pastel_id" => $pastel_id, "anoncod" => $anonCod]);
+    } else {
+        // Si queda más de 1, restar 1 a la cantidad
+        $sqlUpdate = "UPDATE carretillaanon SET crrctd = crrctd - 1 WHERE pastel_id = :pastel_id AND anoncod = :anoncod;";
+        return self::executeNonQuery($sqlUpdate, ["pastel_id" => $pastel_id, "anoncod" => $anonCod]);
+    }
+}
+
+public static function addToAnonCartCantidad(int $pastel_id, string $anonCod)
+    {
+        $params = ["anoncod" => $anonCod, "pastel_id" => $pastel_id];
+
+        // Verifica si el pastel ya está en el carrito anónimo
+        $sqlGet = "SELECT 1 FROM carretillaanon WHERE anoncod = :anoncod AND pastel_id = :pastel_id;";
+        $existe = self::obtenerUnRegistro($sqlGet, $params);
+
+        if ($existe) {
+            // Si ya está, aumenta la cantidad en 1
+            $sqlUpdate = "UPDATE carretillaanon
+                          SET crrctd = crrctd + 1, crrfching = NOW()
+                          WHERE anoncod = :anoncod AND pastel_id = :pastel_id;";
+            return self::executeNonQuery($sqlUpdate, $params);
+        } else {
+            // Si no está, inserta uno con cantidad 1 y precio actual del pastel
+            $sqlInsert = "INSERT INTO carretillaanon (anoncod, pastel_id, crrctd, crrprc, crrfching)
+                          SELECT :anoncod, p.pastel_id, 1, p.precio, NOW()
+                          FROM pasteles p
+                          WHERE p.pastel_id = :pastel_id;";
+            return self::executeNonQuery($sqlInsert, $params);
+        }
+    }
     public static function addToAnonCart(int $pastel_id, string $anonCod, int $cantidad, float $precio)
     {
         $validateSql = "SELECT * from carretillaanon where anoncod = :anoncod and pastel_id = :pastel_id";
@@ -128,6 +173,62 @@ class Cart extends \Dao\Table
         return self::obtenerRegistros("SELECT a.*, b.crrctd, b.crrprc, b.crrfching from pasteles a inner join carretilla b on a.pastel_id = b.pastel_id where b.usercod=:usercod;", ["usercod"=>$usercod]);
     }
 
+    public static function aumentarCantidad(int $pastel_id)
+{
+    $updateSql = "UPDATE pasteles SET cantidad = cantidad + 1 WHERE pastel_id = :pastel_id";
+    return self::executeNonQuery($updateSql, ["pastel_id" => $pastel_id]);
+}
+public static function addToCart(int $pastel_id, int $usercod)
+{
+    
+    $sqlGet = "SELECT crrctd FROM carretilla WHERE pastel_id = :pastel_id AND usercod = :usercod;";
+    $registro = self::obtenerUnRegistro($sqlGet, [
+        "pastel_id" => $pastel_id,
+        "usercod" => $usercod
+    ]);
+
+    if ($registro) {
+       
+        $sqlUpdate = "UPDATE carretilla SET crrctd = crrctd + 1 WHERE pastel_id = :pastel_id AND usercod = :usercod;";
+        return self::executeNonQuery($sqlUpdate, [
+            "pastel_id" => $pastel_id,
+            "usercod" => $usercod
+        ]);
+    }
+
+
+    return 0;
+}
+public static function removeFromCart(int $pastel_id, int $usercod)
+{
+   
+    $sqlGet = "SELECT crrctd FROM carretilla WHERE pastel_id = :pastel_id AND usercod = :usercod;";
+    $registro = self::obtenerUnRegistro($sqlGet, [
+        "pastel_id" => $pastel_id,
+        "usercod" => $usercod
+    ]);
+
+    if ($registro) {
+        $cantidad = intval($registro["crrctd"]);
+        if ($cantidad > 1) {
+        
+            $sqlUpdate = "UPDATE carretilla SET crrctd = crrctd - 1 WHERE pastel_id = :pastel_id AND usercod = :usercod;";
+            return self::executeNonQuery($sqlUpdate, [
+                "pastel_id" => $pastel_id,
+                "usercod" => $usercod
+            ]);
+        } else {
+           
+            $sqlDelete = "DELETE FROM carretilla WHERE pastel_id = :pastel_id AND usercod = :usercod;";
+            return self::executeNonQuery($sqlDelete, [
+                "pastel_id" => $pastel_id,
+                "usercod" => $usercod
+            ]);
+        }
+    }
+    return 0;
+}
+
     public static function addToAuthCart(int $pastel_id, string $usercod, int $cantidad, float $precio)
     {
         $validateSql = "SELECT * from carretilla where usercod = :usercod and pastel_id = :pastel_id";
@@ -157,7 +258,7 @@ class Cart extends \Dao\Table
         self::executeNonQuery($deleteSql, ["anoncod" => $anonCod]);
     }
 
-    //Funcion para borrar la carretilla cuando el usuario complete la compra
+   
     public static function deleteAuthCart(int $usercod){
         $deleteSql = "DELETE from carretilla WHERE usercod = :usercod;";
         self::executeNonQuery($deleteSql, ["usercod" => $usercod]);
@@ -170,4 +271,66 @@ class Cart extends \Dao\Table
         $productosDisponibles = self::obtenerRegistros($sqlAllProductosActivos, array("pastel_id" => $pastel_id));
         return $productosDisponibles;
     }
+   public static function deleteFromCart(int $pastel_id, string $anonCod)
+{
+    
+    $sqlGetCantidad = "SELECT crrctd FROM carretilla WHERE pastel_id = :pastel_id AND usercod = :usercod;";
+    $result = self::obtenerUnRegistro($sqlGetCantidad, [
+        "pastel_id" => $pastel_id,
+        "usercod" => $anonCod
+    ]);
+
+    if (!$result) {
+        return false; 
+    }
+
+    $cantidad = intval($result["crrctd"]);
+
+    $sqlUpdateStock = "UPDATE pasteles SET cantidad = cantidad + :cantidad WHERE pastel_id = :pastel_id;";
+    self::executeNonQuery($sqlUpdateStock, [
+        "cantidad" => $cantidad,
+        "pastel_id" => $pastel_id
+    ]);
+
+   
+    $sqlDelete = "DELETE FROM carretilla WHERE pastel_id = :pastel_id AND usercod = :usercod;";
+    return self::executeNonQuery($sqlDelete, [
+        "pastel_id" => $pastel_id,
+        "usercod" => $anonCod
+    ]);
+}
+
+public static function deleteFromAnonCart(int $pastel_id, string $anonCod)
+{
+
+    $sqlGetCantidad = "SELECT crrctd FROM carretillaanon WHERE pastel_id = :pastel_id AND anoncod = :anoncod;";
+    $result = self::obtenerUnRegistro($sqlGetCantidad, [
+        "pastel_id" => $pastel_id,
+        "anoncod" => $anonCod
+    ]);
+
+    if (!$result) {
+        return false; 
+    }
+
+    $cantidad = intval($result["crrctd"]);
+
+ 
+    $sqlUpdateStock = "UPDATE pasteles SET cantidad = cantidad + :cantidad WHERE pastel_id = :pastel_id;";
+    self::executeNonQuery($sqlUpdateStock, [
+        "cantidad" => $cantidad,
+        "pastel_id" => $pastel_id
+    ]);
+
+
+    $sqlDelete = "DELETE FROM carretillaanon WHERE pastel_id = :pastel_id AND anoncod = :anoncod;";
+    return self::executeNonQuery($sqlDelete, [
+        "pastel_id" => $pastel_id,
+        "anoncod" => $anonCod
+    ]);
+}
+   
+  
+
+
 }

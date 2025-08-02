@@ -2,9 +2,9 @@
 namespace Dao\Security;
 
 if (version_compare(phpversion(), '7.4.0', '<')) {
-        define('PASSWORD_ALGORITHM', 1);  //BCRYPT
+        define('PASSWORD_ALGORITHM', 1); 
 } else {
-    define('PASSWORD_ALGORITHM', '2y');  //BCRYPT
+    define('PASSWORD_ALGORITHM', '2y');  
 }
 /*
 usercod     bigint(10) AI PK
@@ -31,7 +31,6 @@ class Security extends \Dao\Table
         if ($filter == "" && $page == -1 && $items == 0) {
             $sqlstr = "SELECT * FROM usuario;";
         } else {
-            //TODO: Terminar consultas FACET
             if ($page = -1 and $items = 0) {
                 $sqlstr = sprintf("SELECT * FROM usuarios %s;", $filter);
             } else {
@@ -47,43 +46,65 @@ class Security extends \Dao\Table
         return self::obtenerRegistros($sqlstr, array());
     }
 
-    static public function newUsuario($email, $password)
-    {
-        if (!\Utilities\Validators::IsValidEmail($email)) {
-            throw new Exception("Correo no es válido");
-        }
-        if (!\Utilities\Validators::IsValidPassword($password)) {
-            throw new Exception("Contraseña debe ser almenos 8 caracteres, 1 número, 1 mayúscula, 1 símbolo especial");
-        }
-
-        $newUser = self::_usuarioStruct();
-        //Tratamiento de la Contraseña
-        $hashedPassword = self::_hashPassword($password);
-
-        unset($newUser["usercod"]);
-        unset($newUser["userfching"]);
-        unset($newUser["userpswdchg"]);
-
-        $newUser["useremail"] = $email;
-        $newUser["username"] = "John Doe";
-        $newUser["userpswd"] = $hashedPassword;
-        $newUser["userpswdest"] = Estados::ACTIVO;
-        $newUser["userpswdexp"] = date('Y-m-d', time() + 7776000);  //(3*30*24*60*60) (m d h mi s)
-        $newUser["userest"] = Estados::ACTIVO;
-        $newUser["useractcod"] = hash("sha256", $email.time());
-        $newUser["usertipo"] = UsuarioTipo::PUBLICO;
-
-        $sqlIns = "INSERT INTO `usuario` (`useremail`, `username`, `userpswd`,
-            `userfching`, `userpswdest`, `userpswdexp`, `userest`, `useractcod`,
-            `userpswdchg`, `usertipo`)
-            VALUES
-            ( :useremail, :username, :userpswd,
-            now(), :userpswdest, :userpswdexp, :userest, :useractcod,
-            now(), :usertipo);";
-
-        return self::executeNonQuery($sqlIns, $newUser);
-
+  static public function newUsuario($email, $password)
+{
+    if (!\Utilities\Validators::IsValidEmail($email)) {
+        throw new Exception("Correo no es válido");
     }
+    if (!\Utilities\Validators::IsValidPassword($password)) {
+        throw new Exception("Contraseña debe ser al menos 8 caracteres, 1 número, 1 mayúscula, 1 símbolo especial");
+    }
+
+    // Validar que no exista el correo
+    if (self::getUsuarioByEmail($email)) {
+        throw new Exception("Este correo ya está registrado");
+    }
+
+    $newUser = self::_usuarioStruct();
+    $hashedPassword = self::_hashPassword($password);
+
+    unset($newUser["usercod"]);
+    unset($newUser["userfching"]);
+    unset($newUser["userpswdchg"]);
+
+    $newUser["useremail"] = $email;
+    $newUser["username"] = "John Doe";
+    $newUser["userpswd"] = $hashedPassword;
+    $newUser["userpswdest"] = Estados::ACTIVO;
+    $newUser["userpswdexp"] = date('Y-m-d', time() + 7776000);
+    $newUser["userest"] = Estados::ACTIVO;
+    $newUser["useractcod"] = hash("sha256", $email . time());
+    $newUser["usertipo"] = UsuarioTipo::PUBLICO;
+
+    $sqlIns = "INSERT INTO usuario (useremail, username, userpswd,
+        userfching, userpswdest, userpswdexp, userest, useractcod,
+        userpswdchg, usertipo)
+        VALUES
+        (:useremail, :username, :userpswd,
+        NOW(), :userpswdest, :userpswdexp, :userest, :useractcod,
+        NOW(), :usertipo);";
+
+    if (self::executeNonQuery($sqlIns, $newUser)) {
+        $usuario = self::getUsuarioByEmail($email);
+
+        if ($usuario && isset($usuario["usercod"])) {
+            $userId = $usuario["usercod"];
+
+            // Asegurar que el rol 'PUBLIC' exista
+            if (!self::getRol("client")) {
+                self::addNewRol("client", "Rol público por defecto", "ACT");
+            }
+
+            $sqlRol = "INSERT INTO roles_usuarios (usercod, rolescod, roleuserest, roleuserfch, roleuserexp)
+                       VALUES (:usercod, 'client', 'ACT', NOW(), DATE_ADD(NOW(), INTERVAL 10 YEAR));";
+
+            self::executeNonQuery($sqlRol, ["usercod" => $userId]);
+            return true;
+        }
+    }
+
+    return false;
+}
 
     static public function getUsuarioByEmail($email)
     {
